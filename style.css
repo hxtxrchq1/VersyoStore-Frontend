@@ -1,0 +1,144 @@
+@import url('https://api.fontshare.com/v2/css?f[]=switzer@1,2&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Variables de marca Versyo */
+:root {
+	--brand-cream: #f8f6f1;
+	--brand-light: #e1eae5;
+	--brand-mint: #a7d7b8;
+	--brand-primary: #66b2a0;
+	--brand-dark: #4e796b;
+	--brand-hover: #5a9d8d;
+	--brand-black: #1a1a1a;
+}
+
+@layer base {
+	html {
+		scroll-behavior: smooth;
+	}
+
+	html, body {
+		font-family: 'Switzer', system-ui, -apple-system, sans-serif;
+		@apply bg-white text-neutral-900 antialiased;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		font-family: 'Switzer', system-ui, sans-serif;
+		@apply font-semibold;
+	}
+
+	/* Scrollbar personalizado */
+	::-webkit-scrollbar {
+		width: 10px;
+	}
+
+	::-webkit-scrollbar-track {
+		@apply bg-neutral-100;
+	}
+
+	::-webkit-scrollbar-thumb {
+		@apply bg-versyo-primary rounded-full;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		@apply bg-versyo-hover;
+	}
+}
+
+@layer components {
+	/* Botón primario moderno */
+	.btn-primary {
+		@apply bg-versyo-primary text-white px-6 py-3 rounded-lg font-semibold
+			transition-all duration-300 hover:bg-versyo-hover hover:shadow-lg
+			transform hover:-translate-y-0.5 active:translate-y-0;
+	}
+
+	/* Botón secundario */
+	.btn-secondary {
+		@apply bg-versyo-dark text-white px-6 py-3 rounded-lg font-semibold
+			transition-all duration-300 hover:bg-versyo-deep hover:shadow-lg
+			transform hover:-translate-y-0.5 active:translate-y-0;
+	}
+
+	/* Botón outline */
+	.btn-outline {
+		@apply border-2 border-versyo-primary text-versyo-primary px-6 py-3 rounded-lg
+			font-semibold transition-all duration-300 hover:bg-versyo-primary hover:text-white
+			hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0;
+	}
+
+	/* Tarjeta de producto */
+	.product-card {
+		@apply bg-white rounded-xl shadow-card overflow-hidden
+			transition-all duration-300 hover:shadow-hover
+			border border-neutral-100 hover:border-versyo-mint/50;
+	}
+
+	/* Input moderno */
+	.input-modern {
+		@apply w-full px-4 py-3 border border-neutral-300 rounded-lg
+			focus:ring-2 focus:ring-versyo-primary focus:border-versyo-primary
+			transition-all duration-200 outline-none bg-white text-versyo-black;
+	}
+
+	/* Banner hero */
+	.hero-banner {
+		@apply relative bg-gradient-to-br from-versyo-cream via-white to-versyo-light
+			overflow-hidden;
+	}
+
+	/* Overlay oscuro */
+	.dark-overlay {
+		@apply absolute inset-0 bg-black bg-opacity-40;
+	}
+
+	/* Badge de descuento */
+	.discount-badge {
+		@apply absolute top-2 right-2 bg-versyo-primary text-white
+			px-3 py-1 rounded-full text-sm font-bold shadow-lg z-10;
+	}
+
+	/* Sección con separador */
+	.section-divider {
+		@apply relative py-16 after:absolute after:bottom-0 after:left-1/2
+			after:-translate-x-1/2 after:w-24 after:h-1 after:bg-versyo-primary
+			after:rounded-full;
+	}
+}
+
+@layer utilities {
+	/* Animaciones personalizadas */
+	.animate-float {
+		animation: float 3s ease-in-out infinite;
+	}
+
+	@keyframes float {
+		0%, 100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-10px);
+		}
+	}
+
+	/* Gradientes personalizados */
+	.gradient-primary {
+		@apply bg-gradient-to-r from-versyo-primary to-versyo-dark;
+	}
+
+	.gradient-dark {
+		@apply bg-gradient-to-br from-versyo-dark via-versyo-deep to-versyo-black;
+	}
+
+	/* Texto con gradiente */
+	.text-gradient {
+		@apply bg-clip-text text-transparent bg-gradient-to-r from-versyo-primary to-versyo-dark;
+	}
+
+	.text-gradient-inverse {
+		@apply bg-clip-text text-transparent bg-gradient-to-r from-white to-versyo-mint;
+	}
+}

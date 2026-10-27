@@ -1,0 +1,387 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Save, Upload, X } from 'lucide-react';
+import { motion } from 'framer-motion';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+
+const AdminProductForm: React.FC = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditMode = !!id;
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string>('');
+
+  const [formData, setFormData] = useState({
+    name: '',
+    category: 'Hombres',
+    price: '',
+    stock: '',
+    description: '',
+    sizes: [] as string[],
+    colors: [] as string[],
+    image: ''
+  });
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (!userData) {
+      navigate('/login');
+      return;
+    }
+    const user = JSON.parse(userData);
+    if (user.rol !== 'admin') {
+      navigate('/account');
+      return;
+    }
+
+    // Si es modo edición, cargar datos del producto
+    if (isEditMode) {
+      // Simular carga de datos
+      const mockProduct = {
+        id: id,
+        name: 'Premium Cotton Hoodie',
+        category: 'Hombres',
+        price: '189.99',
+        stock: '25',
+        description: 'Hoodie de algodón premium con diseño contemporáneo. Material suave y duradero, perfecto para cualquier ocasión.',
+        sizes: ['S', 'M', 'L', 'XL'],
+        colors: ['Negro', 'Gris', 'Azul Marino'],
+        image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400'
+      };
+      setFormData(mockProduct);
+      setSelectedImage(mockProduct.image);
+    }
+    
+    setIsLoading(false);
+  }, [navigate, id, isEditMode]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSizeToggle = (size: string) => {
+    setFormData(prev => ({
+      ...prev,
+      sizes: prev.sizes.includes(size)
+        ? prev.sizes.filter(s => s !== size)
+        : [...prev.sizes, size]
+    }));
+  };
+
+  const handleColorAdd = (color: string) => {
+    if (color && !formData.colors.includes(color)) {
+      setFormData(prev => ({
+        ...prev,
+        colors: [...prev.colors, color]
+      }));
+    }
+  };
+
+  const handleColorRemove = (color: string) => {
+    setFormData(prev => ({
+      ...prev,
+      colors: prev.colors.filter(c => c !== color)
+    }));
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setSelectedImage(result);
+        setFormData(prev => ({ ...prev, image: result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+
+    // Simular guardado
+    setTimeout(() => {
+      setIsSaving(false);
+      // Aquí iría la lógica real de guardado
+      navigate('/admin/products');
+    }, 1500);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-versyo-cream to-white flex items-center justify-center">
+        <div className="text-versyo-primary text-xl">Cargando...</div>
+      </div>
+    );
+  }
+
+  const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-versyo-cream to-white">
+      <Header />
+      
+      <section className="py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <button
+              onClick={() => navigate('/admin/products')}
+              className="flex items-center space-x-2 text-versyo-dark hover:text-versyo-primary transition-colors mb-4"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span>Volver a Productos</span>
+            </button>
+
+            <h1 className="text-3xl md:text-4xl font-bold text-versyo-black">
+              {isEditMode ? 'Editar Producto' : 'Agregar Nuevo Producto'}
+            </h1>
+            <p className="text-versyo-black/70 mt-2">
+              {isEditMode ? 'Actualiza la información del producto' : 'Completa los datos del nuevo producto'}
+            </p>
+          </motion.div>
+
+          {/* Form */}
+          <motion.form
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            onSubmit={handleSubmit}
+            className="bg-white rounded-xl shadow-card p-8 border border-versyo-mint"
+          >
+            <div className="space-y-6">
+              {/* Image Upload */}
+              <div>
+                <label className="block text-sm font-medium text-versyo-black mb-2">
+                  Imagen del Producto
+                </label>
+                <div className="flex items-center space-x-4">
+                  {selectedImage ? (
+                    <div className="relative w-32 h-32 rounded-lg overflow-hidden border-2 border-versyo-mint">
+                      <img src={selectedImage} alt="Preview" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setSelectedImage('')}
+                        className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="w-32 h-32 border-2 border-dashed border-versyo-mint rounded-lg flex items-center justify-center">
+                      <Upload className="w-8 h-8 text-versyo-black/40" />
+                    </div>
+                  )}
+                  <label className="cursor-pointer">
+                    <div className="px-4 py-2 bg-versyo-primary text-white rounded-lg hover:bg-versyo-hover transition-colors">
+                      {selectedImage ? 'Cambiar Imagen' : 'Subir Imagen'}
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* Product Name */}
+              <div>
+                <label className="block text-sm font-medium text-versyo-black mb-2">
+                  Nombre del Producto *
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                  className="input-modern w-full"
+                  placeholder="Ej: Premium Cotton Hoodie"
+                />
+              </div>
+
+              {/* Category and Price */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-versyo-black mb-2">
+                    Categoría *
+                  </label>
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                    required
+                    className="input-modern w-full"
+                  >
+                    <option value="Hombres">Hombres</option>
+                    <option value="Mujeres">Mujeres</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-versyo-black mb-2">
+                    Precio (S/) *
+                  </label>
+                  <input
+                    type="number"
+                    name="price"
+                    value={formData.price}
+                    onChange={handleInputChange}
+                    required
+                    step="0.01"
+                    min="0"
+                    className="input-modern w-full"
+                    placeholder="189.99"
+                  />
+                </div>
+              </div>
+
+              {/* Stock */}
+              <div>
+                <label className="block text-sm font-medium text-versyo-black mb-2">
+                  Stock Disponible *
+                </label>
+                <input
+                  type="number"
+                  name="stock"
+                  value={formData.stock}
+                  onChange={handleInputChange}
+                  required
+                  min="0"
+                  className="input-modern w-full"
+                  placeholder="25"
+                />
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-sm font-medium text-versyo-black mb-2">
+                  Descripción
+                </label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  rows={4}
+                  className="input-modern w-full resize-none"
+                  placeholder="Describe el producto, materiales, características especiales..."
+                />
+              </div>
+
+              {/* Sizes */}
+              <div>
+                <label className="block text-sm font-medium text-versyo-black mb-3">
+                  Tallas Disponibles
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {availableSizes.map(size => (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() => handleSizeToggle(size)}
+                      className={`px-4 py-2 rounded-lg border-2 font-medium transition-all ${
+                        formData.sizes.includes(size)
+                          ? 'bg-versyo-primary text-white border-versyo-primary'
+                          : 'bg-white text-versyo-black border-versyo-mint hover:border-versyo-primary'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Colors */}
+              <div>
+                <label className="block text-sm font-medium text-versyo-black mb-2">
+                  Colores Disponibles
+                </label>
+                <div className="flex items-center space-x-2 mb-3">
+                  <input
+                    type="text"
+                    id="colorInput"
+                    className="input-modern flex-1"
+                    placeholder="Ej: Negro, Azul Marino, Gris..."
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const input = e.currentTarget;
+                        handleColorAdd(input.value);
+                        input.value = '';
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const input = document.getElementById('colorInput') as HTMLInputElement;
+                      handleColorAdd(input.value);
+                      input.value = '';
+                    }}
+                    className="px-4 py-2 bg-versyo-primary text-white rounded-lg hover:bg-versyo-hover transition-colors"
+                  >
+                    Agregar
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {formData.colors.map(color => (
+                    <span
+                      key={color}
+                      className="inline-flex items-center space-x-2 px-3 py-1 bg-versyo-mint/30 text-versyo-black rounded-lg"
+                    >
+                      <span>{color}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleColorRemove(color)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Submit Buttons */}
+              <div className="flex items-center justify-end space-x-4 pt-6 border-t border-versyo-mint">
+                <button
+                  type="button"
+                  onClick={() => navigate('/admin/products')}
+                  className="px-6 py-3 border-2 border-versyo-mint text-versyo-dark rounded-lg hover:bg-versyo-light transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="px-6 py-3 bg-versyo-primary text-white rounded-lg hover:bg-versyo-hover transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Save className="w-5 h-5" />
+                  <span>{isSaving ? 'Guardando...' : isEditMode ? 'Actualizar Producto' : 'Crear Producto'}</span>
+                </button>
+              </div>
+            </div>
+          </motion.form>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default AdminProductForm;
