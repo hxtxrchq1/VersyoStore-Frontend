@@ -137,7 +137,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-white/10 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-white/60 text-sm">
-              © 2025 Versyo Store. Todos los derechos reservados. • Desarrollado por <a rel="nofollow" target="_blank" href="https://chiqo.site" className="text-versyo-primary hover:text-white transition-colors">Chiqo</a>
+              © 2025 Versyo Store. Todos los derechos reservados. • Desarrollado por <a rel="nofollow" target="_blank" href="https://chiqo.cc.cd" className="text-versyo-primary hover:text-white transition-colors">Chiqo</a>
             </p>
             <div className="flex gap-4">
               <Link to="/terms" className="text-white/60 hover:text-white text-sm transition-colors">Términos</Link>

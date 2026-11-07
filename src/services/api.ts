@@ -1,7 +1,7 @@
 import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://backversyoend.chiqo.site';
-const PRODUCTION_API_URL = 'https://backversyoend.chiqo.site';
+const API_URL = import.meta.env.VITE_API_URL || 'https://backversyoend.chiqo.cc.cd';
+const PRODUCTION_API_URL = 'https://backversyoend.chiqo.cc.cd';
 
 // Crear instancia de axios
 const api: AxiosInstance = axios.create({
